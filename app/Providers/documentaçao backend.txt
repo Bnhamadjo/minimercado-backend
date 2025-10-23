@@ -1,0 +1,95 @@
+Claro! Aqui está uma documentação clara e objetiva para registrar a solução que você implementou no seu projeto Laravel:
+
+---
+
+# 🧾 Documentação Técnica: Correção de Erro com `performance_schema.session_status` no Laravel
+
+## 📌 Problema
+
+Ao executar a aplicação Laravel com MySQL 8+, foi identificado o seguinte erro:
+
+```
+SQLSTATE[42S02]: Base table or view not found: 1146 Table 'performance_schema.session_status' doesn't exist
+```
+
+Esse erro ocorre porque o Laravel tenta acessar a tabela `performance_schema.session_status`, que não existe em versões recentes do MySQL.
+
+---
+
+## 🧠 Causa
+
+O erro vem da classe `Illuminate\Database\Query\Grammars\MySqlGrammar`, que contém o seguinte trecho:
+
+```php
+return 'select variable_value as `Value` from performance_schema.session_status where variable_name = \'threads_connected\'';
+```
+
+Essa consulta é incompatível com MySQL 8+, onde a tabela correta é `INFORMATION_SCHEMA.SESSION_STATUS`.
+
+---
+
+## ✅ Solução
+
+Foi criada uma **gramática personalizada** para sobrescrever o método problemático e evitar alterações diretas no core do Laravel.
+
+### 1. Criar a classe personalizada
+
+**Local:** `app/Database/Query/Grammars/MySqlGrammar.php`
+
+```php
+<?php
+
+namespace App\Database\Query\Grammars;
+
+use Illuminate\Database\Query\Grammars\MySqlGrammar as BaseMySqlGrammar;
+
+class MySqlGrammar extends BaseMySqlGrammar
+{
+    public function compileThreadsConnected()
+    {
+        return "select variable_value as `Value` from INFORMATION_SCHEMA.SESSION_STATUS where variable_name = 'Threads_connected'";
+    }
+}
+```
+
+---
+
+### 2. Registrar a gramática no Laravel
+
+**Local:** `app/Providers/AppServiceProvider.php`
+
+```php
+use Illuminate\Support\Facades\DB;
+use App\Database\Query\Grammars\MySqlGrammar;
+
+public function boot(): void
+{
+    DB::extend('mysql', function ($config, $name) {
+        $connection = app('db.factory')->make($config, $name);
+        $connection->setQueryGrammar(new MySqlGrammar($connection));
+        return $connection;
+    });
+}
+```
+
+---
+
+### 3. Limpar cache e otimizar
+
+Execute os comandos abaixo após a alteração:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan optimize:clear
+```
+
+---
+
+## 🧪 Resultado
+
+A aplicação passou a funcionar corretamente com MySQL 8+, sem erros relacionados à tabela `performance_schema.session_status`.
+
+---
+
+Se quiser, posso te ajudar a transformar isso em um documento Markdown, um post interno para sua equipe, ou até um artigo técnico para compartilhar com a comunidade. Quer seguir por algum desses caminhos?
