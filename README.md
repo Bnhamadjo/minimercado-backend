@@ -7,6 +7,65 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# Minimercado Backend
+
+## 🧾 Visão Geral
+Este projeto é o backend de um sistema de gestão para minimercado, desenvolvido com Laravel. Ele oferece funcionalidades para controle de produtos, vendas, fornecedores, usuários e outras operações essenciais para o funcionamento de um pequeno mercado.
+
+## ⚙️ Instalação
+
+### Requisitos
+- PHP >= 8.0
+- Composer
+- MySQL
+- Node.js e npm (opcional, para compilação de assets)
+
+### Passos
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/Bnhamadjo/minimercado-backend.git
+   cd minimercado-
+   
+### Instale as dependencias
+1. composer install
+2. Copie o arquivo .env.example para .env e configure:
+    cp .env.example .env
+3. Gere a chave da aplicação:
+    php artisan key:generate
+4. Configure o banco de dados no .env e rode as migrations:
+    php artisan migrate
+5. inicie o servidor
+    php artisan serve
+
+### 🔧 Configuração
+
+Configure o .env com suas credenciais de banco de dados, email, e outras variáveis.
+Use php artisan storage:link para criar o link simbólico para arquivos públicos.
+
+### 📦 Funcionalidades
+
+Cadastro e gestão de produtos
+Controle de estoque com alerta de baixo nível
+Cadastro de fornecedores
+Registro de vendas
+Geração de recibos
+Autenticação de usuários
+Suporte a moeda FCFA (XOF)
+
+### 📡 Endpoints principais
+
+GET /api/produtos — Lista todos os produtos
+POST /api/produtos — Cadastra um novo produto
+GET /api/fornecedores — Lista fornecedores
+POST /api/vendas — Registra uma venda
+GET /api/estoque/baixo — Lista produtos com estoque baixo
+
+### 👤 Autor
+Braima Nhamadjo
+GitHub: @Bnhamadjo
+
+
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
