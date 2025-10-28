@@ -12,6 +12,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MovimentacaoEstoqueController;
 use App\Http\Controllers\ConfiguracoesController;
 use App\Http\Controllers\PermissoesController;
+use App\Http\Controllers\InventarioController;
+
 
 // Autenticação
 Route::post('/login', [AuthController::class, 'login']);
@@ -44,6 +46,11 @@ Route::prefix('estoque')->group(function () {
     Route::get('/movimentacoes', [MovimentacaoEstoqueController::class, 'index']);
     Route::post('/movimentacoes', [MovimentacaoEstoqueController::class, 'store']);
 });
+
+//inventario
+Route::get('/inventario', [DashboardController::class, 'inventario']);
+Route::get('/inventario/dados', [InventarioController::class, 'inventario']);
+Route::get('/inventario', [InventarioController::class, 'index']);
 
 // Configurações
 Route::prefix('configuracoes')->group(function () {

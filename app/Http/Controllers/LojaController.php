@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Loja;
 
+
 class LojaController extends Controller
 {
     /**
      * Display the store settings.
      */
+
     public function show()
     {
         $loja = Loja::first();
