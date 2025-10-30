@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MovimentacaoEstoque extends Model
 {
-    protected $fillable = ['produto_id', 'tipo', 'quantidade', 'motivo'];
+    protected $fillable = ['produto_id', 'tipo', 'quantidade', 'motivo', 'data_validade'];
 
     public function produto()
     {
