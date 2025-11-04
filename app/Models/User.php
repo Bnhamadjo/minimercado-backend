@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // apenas o nome do campo
     ];
 
     /**
@@ -39,5 +40,12 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * Definir valores padrão ao criar usuário.
+     */
+    protected $attributes = [
+        'role' => 'user', // valor padrão
     ];
 }

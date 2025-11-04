@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PermissaoConfig extends Model
 {
-   protected $fillable = ['user_id', 'perfil', 'permissoes'];
+   protected $fillable = [ 'perfil', 'permissoes'];
 
 protected $casts = [
     'permissoes' => 'array'

@@ -20,6 +20,10 @@ class Loja extends Model
         'logo',
     ];
 
+    public function getLogoUrlAttribute() {
+    return $this->logo ? asset("storage/{$this->logo}") : null;
+}
+
     public function notificacaoConfig()
     {
         return $this->hasOne(NotificacaoConfig::class);

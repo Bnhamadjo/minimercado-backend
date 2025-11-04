@@ -13,6 +13,7 @@ use App\Http\Controllers\MovimentacaoEstoqueController;
 use App\Http\Controllers\ConfiguracoesController;
 use App\Http\Controllers\PermissoesController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\LojaController;
 
 
 // Autenticação
@@ -65,6 +66,8 @@ Route::prefix('configuracoes')->group(function () {
 
     Route::post('/pagamento', [ConfiguracoesController::class, 'criarPagamento']);
 
+    
+
     Route::put('/perfil', [ConfiguracoesController::class, 'atualizarPerfil']);
     Route::put('/loja', [ConfiguracoesController::class, 'atualizarLoja']);
     Route::put('/pagamento', [ConfiguracoesController::class, 'atualizarPagamento']);
@@ -73,3 +76,6 @@ Route::prefix('configuracoes')->group(function () {
     Route::put('/notificacoes', [ConfiguracoesController::class, 'atualizarNotificacoes']);
     Route::put('/permissoes', [PermissoesController::class, 'update']);
 });
+
+    Route::get('/configuracoes/loja', [LojaController::class, 'show']);
+    Route::put('/configuracoes/loja', [LojaController::class, 'update']);

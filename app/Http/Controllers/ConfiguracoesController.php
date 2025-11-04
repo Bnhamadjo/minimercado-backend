@@ -61,28 +61,44 @@ class ConfiguracoesController extends Controller
 
 
     // LOJA
-    public function loja()
-    {
-        return response()->json(Loja::first());
-    }
-
     public function atualizarLoja(Request $request)
 {
-    $loja = Loja::firstOrFail();
+    // Validação dos dados recebidos
+    $validated = $request->validate([
+        'nome_loja' => 'required|string|max:255',
+        'cnpj' => 'required|string|max:20',
+        'endereco' => 'nullable|string|max:255',
+        'telefone' => 'nullable|string|max:15',
+        'logo' => 'nullable|file|image|max:2048'
+    ]);
 
-    // Atualiza campos de texto
-    $loja->update($request->only($loja->getFillable()));
+    // Obtém a primeira loja ou cria uma nova se não existir
+    $loja = Loja::first();
 
-    // Se houver logo enviado
-    if ($request->hasFile('logo')) {
-        $logo = $request->file('logo');
-        $logoPath = $logo->store('public/logos'); // salva em storage/app/public/logos
-        $loja->logo_url = asset(str_replace('public/', 'storage/', $logoPath)); // gera URL pública
-        $loja->save();
+    if (!$loja) {
+        $loja = new Loja(); // cria um novo modelo vazio
     }
 
-    return response()->json(['mensagem' => 'Loja atualizada com sucesso', 'loja' => $loja]);
+    // Atualiza campos normais
+    $loja->fill($validated);
+
+    // Se foi enviado um arquivo de logo, faz upload
+    if ($request->hasFile('logo')) {
+        $path = $request->file('logo')->store('public/logos');
+        $loja->logo = str_replace('public/', 'storage/', $path);
+    }
+
+    // Salva no banco (insert ou update conforme o caso)
+    $loja->save();
+
+    return response()->json([
+        'mensagem' => 'Configurações da loja salvas com sucesso',
+        'loja' => $loja
+    ]);
 }
+
+
+
 
     // ESTOQUE
     public function estoque()
