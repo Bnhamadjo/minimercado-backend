@@ -34,73 +34,45 @@ class MovimentacaoEstoqueController extends Controller
 }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
    public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'produto_id' => 'required|exists:produtos,id',
         'tipo' => 'required|in:entrada,saida',
         'quantidade' => 'required|integer|min:1',
         'motivo' => 'nullable|string',
+        'data_validade' => 'nullable|date',
     ]);
 
-    $produto = Produto::findOrFail($request->produto_id);
+    $produto = Produto::findOrFail($validated['produto_id']);
 
-    if ($request->tipo === 'saida' && $produto->quantidade < $request->quantidade) {
+    if ($validated['tipo'] === 'saida' && $produto->quantidade < $validated['quantidade']) {
         return response()->json(['erro' => 'Estoque insuficiente'], 400);
     }
 
-    DB::transaction(function () use ($request, $produto) {
-        MovimentacaoEstoque::create($request->all());
+    DB::transaction(function () use ($validated, $produto) {
+        // Atualiza o estoque do produto
+        if ($validated['tipo'] === 'entrada') {
+            $produto->increment('quantidade', $validated['quantidade']);
+        } else {
+            $produto->decrement('quantidade', $validated['quantidade']);
+        }
 
-        $request->tipo === 'entrada'
-            ? $produto->increment('quantidade', $request->quantidade)
-            : $produto->decrement('quantidade', $request->quantidade);
+        // Registra a movimentação
+        MovimentacaoEstoque::create([
+            'produto_id' => $produto->id,
+            'tipo' => $validated['tipo'],
+            'quantidade' => $validated['quantidade'],
+            'motivo' => $validated['motivo'] ?? '',
+            'data_validade' => $validated['data_validade'] ?? null,
+        ]);
     });
 
+    
     return response()->json(['mensagem' => 'Movimentação registrada com sucesso']);
 }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(MovimentacaoEstoque $movimentacaoEstoque)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MovimentacaoEstoque $movimentacaoEstoque)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, MovimentacaoEstoque $movimentacaoEstoque)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MovimentacaoEstoque $movimentacaoEstoque)
-    {
-        //
-    }
-
-    
+  
 }
